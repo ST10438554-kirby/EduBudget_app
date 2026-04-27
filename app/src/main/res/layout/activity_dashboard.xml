@@ -1,0 +1,35 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="#E8F5E9">
+
+    <TextView
+        android:text="EduBudget Dashboard"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="30dp"/>
+
+    <Button
+        android:id="@+id/btnCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Category"/>
+
+    <Button
+        android:id="@+id/btnExpense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Expense"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/btnGoal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Budget Goal"
+        android:layout_marginTop="10dp"/>
+</LinearLayout>

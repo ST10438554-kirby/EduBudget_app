@@ -1,0 +1,44 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+}
+
+android {
+    namespace = "com.example.edubudget"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.example.edubudget"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+dependencies {
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.material)
+    ksp(libs.androidx.room.compiler)
+
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+}
