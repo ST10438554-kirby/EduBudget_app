@@ -23,6 +23,9 @@ class DashboardActivity : AppCompatActivity() {
 
         db = AppDatabase.getDatabase(this)
 
+        // ✅ ADD THIS LINE HERE (TEST DATA SEED)
+        DatabaseSeeder.seed(this)
+
         totalText = findViewById(R.id.totalExpensesText)
         countText = findViewById(R.id.expenseCountText)
 

@@ -12,4 +12,8 @@ interface CategoryDao {
 
     @Query("SELECT * FROM category")
     suspend fun getAllCategories(): List<Category>
+
+    // ✅ ADD THIS (required for reset / new user)
+    @Query("DELETE FROM category")
+    suspend fun deleteAll()
 }
