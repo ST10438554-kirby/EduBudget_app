@@ -15,10 +15,7 @@ This is a student budgeting Android application built using Kotlin.
 ## Authors
 Rafiqah Kirby
 Armalene Magerman
-Chloe Langenoven
-
-Authors
-Rafiqah Kirby Armalene Magerman Chloe Langenoven
+Chloe Langenhoven
 
 ## Video Presentation
 [Add your YouTube link here]
