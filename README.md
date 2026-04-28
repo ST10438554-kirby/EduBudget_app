@@ -13,7 +13,9 @@ This is a student budgeting Android application built using Kotlin.
 - Android Jetpack
 
 ## Authors
-Rafiqah Kirby Armalene Magerman Chloe Langenoven
+Rafiqah Kirby 
+Armalene Magerman 
+Chloe Langenhoven
 
 ## Video Presentation
 [Add your YouTube link here]
