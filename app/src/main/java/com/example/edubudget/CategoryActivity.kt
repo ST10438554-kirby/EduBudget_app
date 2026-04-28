@@ -5,53 +5,81 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.edubudget.data.AppDatabase
 import com.example.edubudget.data.Category
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CategoryActivity : AppCompatActivity() {
+
+    private lateinit var categoryName: EditText
+    private lateinit var saveBtn: Button
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category)
 
-        // UX: title + back button
         title = "Add Category"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val categoryName = findViewById<EditText>(R.id.categoryName)
-        val saveBtn = findViewById<Button>(R.id.saveCategoryBtn)
+        categoryName = findViewById(R.id.categoryName)
+        saveBtn = findViewById(R.id.saveCategoryBtn)
 
-        val db = AppDatabase.getDatabase(this)
+        db = AppDatabase.getDatabase(this)
 
         saveBtn.setOnClickListener {
+            saveCategory()
+        }
+    }
 
-            val name = categoryName.text.toString().trim()
+    private fun saveCategory() {
 
-            if (name.isEmpty()) {
-                Toast.makeText(this, "Please enter category name", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+        val name = categoryName.text.toString().trim()
 
-            saveBtn.isEnabled = false
+        if (name.isEmpty()) {
+            Toast.makeText(this, "Please enter category name", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-            val category = Category(name = name)
+        saveBtn.isEnabled = false
 
-            CoroutineScope(Dispatchers.IO).launch {
-                db.categoryDao().insert(category)
+        lifecycleScope.launch(Dispatchers.IO) {
 
-                runOnUiThread {
-                    saveBtn.isEnabled = true
-                    Toast.makeText(this@CategoryActivity, "Category Saved", Toast.LENGTH_SHORT).show()
+            try {
+                db.categoryDao().insert(Category(name = name))
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@CategoryActivity,
+                        "Category Saved",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                     categoryName.text.clear()
+                }
+
+            } catch (e: Exception) {
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@CategoryActivity,
+                        "Category already exists",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            } finally {
+
+                withContext(Dispatchers.Main) {
+                    saveBtn.isEnabled = true
                 }
             }
         }
     }
 
-    // UX: back button support
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true

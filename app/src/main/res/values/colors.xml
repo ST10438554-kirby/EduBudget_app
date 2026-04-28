@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- Brand -->
+    <color name="primary">#4F46E5</color>
+    <color name="secondary">#10B981</color>
+
+    <!-- UI -->
+    <color name="background">#F5F7FA</color>
+    <color name="card">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+
+    <!-- Required -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
 </resources>

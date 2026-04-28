@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.edubudget"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -42,12 +42,8 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    // ---------------- ROOM FIX ----------------
-    implementation(libs.androidx.room.runtime)
-
-    // IMPORTANT: ADD THIS (missing in your setup)
+    // ROOM (FIXED)
+    implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-
-    // KSP compiler
     ksp("androidx.room:room-compiler:2.6.1")
 }

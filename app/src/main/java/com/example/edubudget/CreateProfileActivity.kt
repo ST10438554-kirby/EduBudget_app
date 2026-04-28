@@ -11,12 +11,12 @@ class CreateProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_profile)
 
+        val prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE)
+
         val name = findViewById<EditText>(R.id.name)
         val email = findViewById<EditText>(R.id.email)
         val password = findViewById<EditText>(R.id.password)
         val createBtn = findViewById<Button>(R.id.createBtn)
-
-        val prefs = getSharedPreferences("USER_DATA", MODE_PRIVATE)
 
         createBtn.setOnClickListener {
 

@@ -1,7 +1,10 @@
 package com.example.edubudget
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -11,28 +14,57 @@ import com.example.edubudget.data.Expense
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class ExpenseActivity : AppCompatActivity() {
 
     private var imageUri: Uri? = null
 
+    private lateinit var desc: EditText
+    private lateinit var date: EditText
+    private lateinit var start: EditText
+    private lateinit var end: EditText
+    private lateinit var amount: EditText
+    private lateinit var spinner: Spinner
+    private lateinit var imageView: ImageView
+    private lateinit var progressBar: ProgressBar
+
+    private lateinit var db: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_expense)
 
-        val desc = findViewById<EditText>(R.id.desc)
-        val date = findViewById<EditText>(R.id.date)
-        val startTime = findViewById<EditText>(R.id.startTime)
-        val endTime = findViewById<EditText>(R.id.endTime)
-        val categorySpinner = findViewById<Spinner>(R.id.categorySpinner)
-        val amount = findViewById<EditText>(R.id.amount)
+        db = AppDatabase.getDatabase(this)
 
-        val imageView = findViewById<ImageView>(R.id.imageView)
+        // Views
+        desc = findViewById(R.id.desc)
+        date = findViewById(R.id.date)
+        start = findViewById(R.id.startTime)
+        end = findViewById(R.id.endTime)
+        amount = findViewById(R.id.amount)
+        spinner = findViewById(R.id.categorySpinner)
+        imageView = findViewById(R.id.imageView)
+        progressBar = findViewById(R.id.progressBar)
+
         val pickBtn = findViewById<Button>(R.id.pickImageBtn)
         val saveBtn = findViewById<Button>(R.id.saveExpenseBtn)
 
-        val db = AppDatabase.getDatabase(this)
+        // Date picker
+        date.setOnClickListener {
+            showDatePicker()
+        }
 
+        // Time pickers
+        start.setOnClickListener {
+            showTimePicker(start)
+        }
+
+        end.setOnClickListener {
+            showTimePicker(end)
+        }
+
+        // Image picker
         val pickImage = registerForActivityResult(
             ActivityResultContracts.GetContent()
         ) { uri ->
@@ -45,57 +77,140 @@ class ExpenseActivity : AppCompatActivity() {
         }
 
         saveBtn.setOnClickListener {
+            saveExpense()
+        }
+    }
 
-            val selectedCategory = categorySpinner.selectedItem?.toString()
+    override fun onResume() {
+        super.onResume()
+        loadCategories()
+    }
 
-            if (selectedCategory.isNullOrEmpty()) {
-                Toast.makeText(this, "Select category", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+    // ---------------- DATE PICKER ----------------
+    private fun showDatePicker() {
+        val cal = Calendar.getInstance()
 
-            val expense = Expense(
-                description = desc.text.toString(),
-                date = date.text.toString(),
-                startTime = startTime.text.toString(),
-                endTime = endTime.text.toString(),
-                category = selectedCategory,
-                amount = amount.text.toString().toDoubleOrNull() ?: 0.0,
-                imageUri = imageUri?.toString()
-            )
+        DatePickerDialog(
+            this,
+            { _, year, month, day ->
+                date.setText("$day/${month + 1}/$year")
+            },
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
 
-            lifecycleScope.launch {
+    // ---------------- TIME PICKER ----------------
+    private fun showTimePicker(target: EditText) {
+        val cal = Calendar.getInstance()
 
-                try {
-                    // ✔ run DB work on background thread
-                    withContext(Dispatchers.IO) {
-                        db.expenseDao().insert(expense)
-                    }
+        TimePickerDialog(
+            this,
+            { _, hour, minute ->
+                target.setText(String.format("%02d:%02d", hour, minute))
+            },
+            cal.get(Calendar.HOUR_OF_DAY),
+            cal.get(Calendar.MINUTE),
+            true
+        ).show()
+    }
 
-                    // ✔ UI update on main thread automatically
-                    Toast.makeText(
-                        this@ExpenseActivity,
-                        "Expense Saved Successfully",
-                        Toast.LENGTH_SHORT
-                    ).show()
+    // ---------------- LOAD CATEGORIES ----------------
+    private fun loadCategories() {
 
-                    // ✔ clear fields
-                    desc.text.clear()
-                    date.text.clear()
-                    startTime.text.clear()
-                    endTime.text.clear()
-                    amount.text.clear()
-                    imageView.setImageResource(0)
-                    imageUri = null
+        lifecycleScope.launch(Dispatchers.IO) {
 
-                } catch (e: Exception) {
+            val categories = db.categoryDao().getAllCategories()
+            val names = categories.map { it.name }
 
-                    Toast.makeText(
-                        this@ExpenseActivity,
-                        "Save Failed: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+            withContext(Dispatchers.Main) {
+
+                val finalList =
+                    if (names.isEmpty()) listOf("No categories available")
+                    else names
+
+                val adapter = ArrayAdapter(
+                    this@ExpenseActivity,
+                    android.R.layout.simple_spinner_item,
+                    finalList
+                )
+
+                adapter.setDropDownViewResource(
+                    android.R.layout.simple_spinner_dropdown_item
+                )
+
+                spinner.adapter = adapter
             }
         }
+    }
+
+    // ---------------- SAVE EXPENSE ----------------
+    private fun saveExpense() {
+
+        val descText = desc.text.toString().trim()
+        val dateText = date.text.toString().trim()
+        val startText = start.text.toString().trim()
+        val endText = end.text.toString().trim()
+        val amountText = amount.text.toString().trim()
+        val category = spinner.selectedItem?.toString()
+
+        if (descText.isEmpty() || dateText.isEmpty() || amountText.isEmpty()) {
+            Toast.makeText(this, "Please fill required fields", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (category.isNullOrEmpty() || category == "No categories available") {
+            Toast.makeText(this, "Please add a category first", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val amountValue = amountText.toDoubleOrNull()
+
+        if (amountValue == null) {
+            Toast.makeText(this, "Invalid amount", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val expense = Expense(
+            description = descText,
+            date = dateText,
+            startTime = startText,
+            endTime = endText,
+            category = category,
+            amount = amountValue,
+            imageUri = imageUri?.toString()
+        )
+
+        lifecycleScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.VISIBLE
+            }
+
+            db.expenseDao().insert(expense)
+
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.GONE
+                Toast.makeText(
+                    this@ExpenseActivity,
+                    "Expense saved",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                clearFields()
+            }
+        }
+    }
+
+    // ---------------- CLEAR ----------------
+    private fun clearFields() {
+        desc.text.clear()
+        date.text.clear()
+        start.text.clear()
+        end.text.clear()
+        amount.text.clear()
+        imageView.setImageDrawable(null)
+        imageUri = null
     }
 }

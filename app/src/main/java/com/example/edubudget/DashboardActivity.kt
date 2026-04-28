@@ -4,71 +4,63 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.edubudget.data.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DashboardActivity : AppCompatActivity() {
+
+    private lateinit var totalText: TextView
+    private lateinit var countText: TextView
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        // UX title
-        title = "EduBudget Dashboard"
+        db = AppDatabase.getDatabase(this)
 
-        // ---------------- UI BUTTONS ----------------
-        val btnCategory = findViewById<Button>(R.id.btnCategory)
-        val btnExpense = findViewById<Button>(R.id.btnExpense)
-        val btnGoal = findViewById<Button>(R.id.btnGoal)
-        val btnViewExpenses = findViewById<Button>(R.id.btnViewExpenses)
+        totalText = findViewById(R.id.totalExpensesText)
+        countText = findViewById(R.id.expenseCountText)
 
-        btnViewExpenses.setOnClickListener {
-            startActivity(Intent(this, ExpenseListActivity::class.java))
+        findViewById<Button>(R.id.btnExpense).setOnClickListener {
+            startActivity(Intent(this, ExpenseActivity::class.java))
         }
 
+        findViewById<Button>(R.id.btnCategory).setOnClickListener {
+            startActivity(Intent(this, CategoryActivity::class.java))
+        }
 
-        // ---------------- SUMMARY TEXT ----------------
-        val totalExpensesText = findViewById<TextView>(R.id.totalExpensesText)
-        val expenseCountText = findViewById<TextView>(R.id.expenseCountText)
+        findViewById<Button>(R.id.btnGoal).setOnClickListener {
+            startActivity(Intent(this, BudgetGoalActivity::class.java))
+        }
 
-        val db = AppDatabase.getDatabase(this)
+        findViewById<Button>(R.id.btnViewExpenses).setOnClickListener {
+            startActivity(Intent(this, ExpenseListActivity::class.java))
+        }
+    }
 
-        // ---------------- LOAD DASHBOARD DATA ----------------
+    override fun onResume() {
+        super.onResume()
+        loadDashboard()
+    }
+
+    private fun loadDashboard() {
+
         lifecycleScope.launch(Dispatchers.IO) {
 
             val expenses = db.expenseDao().getAllExpenses()
 
-            var total = 0.0
+            val count = expenses.size
+            val total = expenses.sumOf { it.amount }
 
-            for (e in expenses) {
-                total += 0.0
+            withContext(Dispatchers.Main) {
+                totalText.text = "Total Expenses: R%.2f".format(total)
+                countText.text = "Number of Expenses: $count"
             }
-
-            runOnUiThread {
-
-                totalExpensesText.text = "Total Expenses: R${total}"
-                expenseCountText.text = "Number of Expenses: ${expenses.size}"
-            }
-        }
-
-        // ---------------- NAVIGATION ----------------
-        btnCategory.setOnClickListener {
-            startActivity(Intent(this, CategoryActivity::class.java))
-            Toast.makeText(this, "Opening Categories", Toast.LENGTH_SHORT).show()
-        }
-
-        btnExpense.setOnClickListener {
-            startActivity(Intent(this, ExpenseActivity::class.java))
-            Toast.makeText(this, "Opening Expenses", Toast.LENGTH_SHORT).show()
-        }
-
-        btnGoal.setOnClickListener {
-            startActivity(Intent(this, BudgetGoalActivity::class.java))
-            Toast.makeText(this, "Opening Budget Goals", Toast.LENGTH_SHORT).show()
         }
     }
 }
