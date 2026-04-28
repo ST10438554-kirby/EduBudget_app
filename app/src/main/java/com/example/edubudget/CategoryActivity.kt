@@ -17,6 +17,10 @@ class CategoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category)
 
+        // UX: title + back button
+        title = "Add Category"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val categoryName = findViewById<EditText>(R.id.categoryName)
         val saveBtn = findViewById<Button>(R.id.saveCategoryBtn)
 
@@ -24,21 +28,32 @@ class CategoryActivity : AppCompatActivity() {
 
         saveBtn.setOnClickListener {
 
-            val name = categoryName.text.toString()
+            val name = categoryName.text.toString().trim()
 
             if (name.isEmpty()) {
-                Toast.makeText(this, "Enter category name", Toast.LENGTH_SHORT).show()
-            } else {
+                Toast.makeText(this, "Please enter category name", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                val category = Category(name = name)
+            saveBtn.isEnabled = false
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    db.categoryDao().insert(category)
+            val category = Category(name = name)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                db.categoryDao().insert(category)
+
+                runOnUiThread {
+                    saveBtn.isEnabled = true
+                    Toast.makeText(this@CategoryActivity, "Category Saved", Toast.LENGTH_SHORT).show()
+                    categoryName.text.clear()
                 }
-
-                Toast.makeText(this, "Category Saved", Toast.LENGTH_SHORT).show()
-                categoryName.text.clear()
             }
         }
+    }
+
+    // UX: back button support
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }

@@ -31,14 +31,23 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.constraintlayout)
+
+    // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-
-    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
-    ksp(libs.androidx.room.compiler)
 
+    // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // ---------------- ROOM FIX ----------------
+    implementation(libs.androidx.room.runtime)
+
+    // IMPORTANT: ADD THIS (missing in your setup)
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    // KSP compiler
+    ksp("androidx.room:room-compiler:2.6.1")
 }

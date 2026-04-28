@@ -17,6 +17,10 @@ class BudgetGoalActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_goal)
 
+        // UX: title + back button
+        title = "Budget Goal"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val minSeek = findViewById<SeekBar>(R.id.minSeek)
         val maxSeek = findViewById<SeekBar>(R.id.maxSeek)
 
@@ -37,7 +41,6 @@ class BudgetGoalActivity : AppCompatActivity() {
                 minValue = progress.toDouble()
                 minText.text = "Min: ${format.format(minValue)}"
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
@@ -47,12 +50,19 @@ class BudgetGoalActivity : AppCompatActivity() {
                 maxValue = progress.toDouble()
                 maxText.text = "Max: ${format.format(maxValue)}"
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
         saveBtn.setOnClickListener {
+
+            // UX validation
+            if (minValue >= maxValue) {
+                Toast.makeText(this, "Min must be less than Max", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            saveBtn.isEnabled = false
 
             val goal = BudgetGoal(
                 minAmount = minValue,
@@ -61,9 +71,18 @@ class BudgetGoalActivity : AppCompatActivity() {
 
             lifecycleScope.launch(Dispatchers.IO) {
                 db.budgetGoalDao().insert(goal)
-            }
 
-            Toast.makeText(this, "Budget Goal Saved", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    saveBtn.isEnabled = true
+                    Toast.makeText(this@BudgetGoalActivity, "Budget Goal Saved", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
+    }
+
+    // UX: back button support
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }

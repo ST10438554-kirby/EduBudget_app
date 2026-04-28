@@ -10,6 +10,7 @@ interface ExpenseDao {
     @Insert
     suspend fun insert(expense: Expense)
 
+    // ✅ FIX: renamed to match Dashboard usage
     @Query("SELECT * FROM expense")
-    suspend fun getAll(): List<Expense>
+    suspend fun getAllExpenses(): List<Expense>
 }

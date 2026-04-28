@@ -1,41 +1,93 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center">
+    android:background="#F5F7FA"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/minText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Min"/>
-
-    <SeekBar
-        android:id="@+id/minSeek"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="5000"/>
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center_horizontal">
 
-    <TextView
-        android:id="@+id/maxText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/max"
-        android:layout_marginTop="20dp"/>
+        <!-- TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Budget Goal"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#111827"
+            android:layout_marginBottom="4dp"/>
 
-    <SeekBar
-        android:id="@+id/maxSeek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="10000"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set your monthly spending limits"
+            android:textSize="14sp"
+            android:textColor="#6B7280"
+            android:layout_marginBottom="18dp"/>
 
-    <Button
-        android:id="@+id/saveGoalBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/save_goal"
-        android:layout_marginTop="30dp"/>
+        <!-- CARD -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="18dp"
+            android:background="#FFFFFF"
+            android:elevation="6dp">
 
-</LinearLayout>
+            <!-- MIN LABEL -->
+            <TextView
+                android:id="@+id/minText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Minimum Budget"
+                android:textSize="14sp"
+                android:textColor="#6B7280"
+                android:layout_marginBottom="6dp"/>
+
+            <!-- MIN SEEK -->
+            <SeekBar
+                android:id="@+id/minSeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="5000"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- MAX LABEL -->
+            <TextView
+                android:id="@+id/maxText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Maximum Budget"
+                android:textSize="14sp"
+                android:textColor="#6B7280"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="6dp"/>
+
+            <!-- MAX SEEK -->
+            <SeekBar
+                android:id="@+id/maxSeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="10000"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- SAVE BUTTON -->
+            <Button
+                android:id="@+id/saveGoalBtn"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Save Budget Goal"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4F46E5"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

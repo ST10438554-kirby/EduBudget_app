@@ -11,27 +11,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EduBudget">
+
+        <!-- LOGIN (START SCREEN) -->
         <activity
-            android:name=".BudgetGoalActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ExpenseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CategoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- MAIN SCREENS -->
+        <activity android:name=".DashboardActivity" android:exported="false" />
+        <activity android:name=".ExpenseActivity" android:exported="false" />
+        <activity android:name=".ExpenseListActivity" android:exported="false" />
+        <activity android:name=".CategoryActivity" android:exported="false" />
+        <activity android:name=".BudgetGoalActivity" android:exported="false" />
+        <activity android:name=".CreateProfileActivity" android:exported="false" />
+
+        <!-- BASE / SUPPORT -->
+        <activity android:name=".BaseActivity" android:exported="false" />
+
     </application>
 
 </manifest>
