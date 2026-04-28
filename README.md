@@ -18,7 +18,7 @@ Armalene Magerman
 Chloe Langenhoven 
 
 ## Video Presentation
-[Add your YouTube link here]
+recordings are above
 
 ## License
 This project was developed as part of an academic assignment. All rights reserved by the authors.
